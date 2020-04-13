@@ -10,7 +10,7 @@ def reward_function(params):
     steps = params['steps']+1
     
     # create some parameters for us to use
-    steps_to_complete = 500
+    steps_to_complete = 300
     percent_steps_used = steps/steps_to_complete
 
     # Calculate 3 markers that are at varying distances away from the center line
@@ -29,7 +29,7 @@ def reward_function(params):
         reward = 1e-6  # likely crashed/ close to off track
     # make the reward based on the ratio of track complete vs steps complete
 
-    # reward *= percent_track_complete/percent_steps_used
+    reward *= percent_track_complete/percent_steps_used/50
 
     # reward for being on the left side of the track
 
