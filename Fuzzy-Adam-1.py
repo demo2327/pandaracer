@@ -11,6 +11,21 @@ def reward_function(params):
     percent_track_complete = params['progress'] + 1
     steps = params['steps'] + 1
 
+    #   weighting
+    centerline_weighting = 8
+    all_wheels_on_track_weighting = 5
+    zigzag_weighting = 6
+    percent_track_complete_weighting = 5
+    fewer_steps_weighting = 4
+
+    # Start with a base reward value
+
+    reward = 100
+
+    #############################################################################
+    #                  BEGIN - sample code for time trials                      #
+    #############################################################################
+
     # Calculate 3 markers that are at varying distances away from the center line
     marker_1 = 0.1 * track_width
     marker_2 = 0.25 * track_width
@@ -18,23 +33,60 @@ def reward_function(params):
 
     # Give higher reward if the agent is closer to center line and vice versa
     if distance_from_center <= marker_1:
-        reward = 1
+        reward *= 1 * centerline_weighting
     elif distance_from_center <= marker_2:
-        reward = 0.5
+        reward *= 0.5 * centerline_weighting
     elif distance_from_center <= marker_3:
-        reward = 0.1
+        reward *= 0.1 * centerline_weighting
     else:
         reward = 1e-3  # likely crashed/ close to off track
 
     if all_wheels_on_track:
-        reward *= 1.3
+        reward *= all_wheels_on_track_weighting
 
     # Steering penality threshold, change the number based on your action space setting
     ABS_STEERING_THRESHOLD = 15
 
     # Penalize reward if the agent is steering too much
     if steering > ABS_STEERING_THRESHOLD:
-        reward *= 0.8
+        reward *= 0.8 * zigzag_weighting
+    else:
+        reward *= zigzag_weighting
+    #############################################################################
+    #                    END - sample code for time trials                      #
+    #############################################################################
+
+    #############################################################################
+    #                    BEGIN - Percent Complete                               #
+    #############################################################################
+
+    # track completion creates a number going from 1 at the begining of the race
+    # to 2 for completion. This is then multiplied by the weighting. so a weighting
+    # of 7 would multiple reward by 7 at beginning fo race and 14 at completion
+
+    reward *= (1 + (percent_track_complete / 100)) * percent_track_complete_weighting
+
+    #############################################################################
+    #                    END - Percent Complete                                 #
+    #############################################################################
+
+
+    #############################################################################
+    #                    BEGIN - Fewer Steps to Complete                        #
+    #############################################################################
+
+    # want to reward for not taking too many steps to complete
+    # the fewer steps_to_complete the steeper the reward function
+    steps_to_complete = 400
+    percent_steps_used = steps / steps_to_complete
+
+    reward *= (1 + (percent_steps_used)) * fewer_steps_weighting
+
+
+    #############################################################################
+    #                    END - Fewer Steps to Complete                                 #
+    #############################################################################
+
 
     # printout of standard values for the log
     print("the reward is {}".format(reward))
