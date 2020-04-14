@@ -12,15 +12,15 @@ def reward_function(params):
     steps = params['steps'] + 1
 
     #   weighting
-    centerline_weighting = 8
-    all_wheels_on_track_weighting = 5
-    zigzag_weighting = 6
-    percent_track_complete_weighting = 5
-    fewer_steps_weighting = 4
+    centerline_weighting = 0.8
+    all_wheels_on_track_weighting = 0.5
+    zigzag_weighting = 0.6
+    percent_track_complete_weighting = 0.5
+    fewer_steps_weighting = 0.4
 
     # Start with a base reward value
 
-    reward = 100
+    reward = 10
 
     #############################################################################
     #                  BEGIN - sample code for time trials                      #
@@ -84,7 +84,7 @@ def reward_function(params):
 
 
     #############################################################################
-    #                    END - Fewer Steps to Complete                                 #
+    #                    END - Fewer Steps to Complete                          #
     #############################################################################
 
 
